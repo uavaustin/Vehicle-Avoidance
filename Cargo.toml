@@ -1,0 +1,6 @@
+[package]
+name = "vehicle_avoid"
+version = "0.1.0"
+authors = ["Chaseguy15 <chase.aerospace@utexas.edu>"]
+
+[dependencies]
