@@ -1,5 +1,5 @@
 pub mod location;
 pub mod position;
 
-use self::location::*;
-use self::position::Position;
+pub use self::location::Location;
+pub use self::position::Position;

@@ -51,9 +51,6 @@ mod test{
         let loc = Location::new(0.00001f32, 0.00001f32, 1f32);
         let o = Location::new(0f32, 0f32, 0f32);
         let p = Point::from((&loc, &o));
-        //print!("{}", (2f32 * RADIUS as f32 * (0.00001f32).cos() * ((0.00001) /
-        //    2f32).sin()).asin());
-        print!("x = {}", p.x);
         assert_eq!(p.x, 63.71f32);
         assert_eq!(p.y, 63.71f32);
         assert_eq!(p.z, 1f32);
