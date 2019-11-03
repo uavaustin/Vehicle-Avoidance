@@ -24,12 +24,28 @@ impl From<(&Location, &Location)> for Point {
 }
 
 impl Point {
-    fn new(x: f32, y: f32, z: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
             x,
             y,
             z,
         }
+    }
+
+    pub fn dist(&self, p2: &Point) -> f32 {
+        ((self.x - p2.x).powi(2) + (self.y - p2.y).powi(2) + (self.z - p2.z).powi(2)).sqrt()
+    }
+
+    pub fn x(&self) -> f32 {
+        self.x.into()
+    }
+
+    pub fn y(&self) -> f32 {
+        self.y.into()
+    }
+
+    pub fn z(&self) -> f32 {
+        self.z.into()
     }
 }
 
