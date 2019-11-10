@@ -48,7 +48,7 @@ impl Careless {
     }
 
     // for now just use radial output
-    fn set_bound(self, vel: f32) {
+    fn set_bound(mut self, vel: f32) {
         self.bound = vel * self.get_safety();
     }
 
@@ -66,17 +66,21 @@ impl Careless {
             true
         }
     }
-/*
-    fn add_plane(mut self, plane: Position) -> Self {
+
+    fn set_track(&mut self, plane: Vec<Track>) {
+        self.trajectory = plane;
+         = self.get_traj_vel;
+        /*
         Self {
             current: self.current,
             target: self.target,
-            trajectory: vec![plane],
-            origin: self.origin,
-            bound: ,
+            trajectory: vec![p1, p2],
+            safe_time: 10f32,
+            bound: 0f32,
         }
+        */
     }
-    */
+
 }
 
 #[cfg(test)]
@@ -92,5 +96,12 @@ mod test {
         assert_eq!(c.trajectory, vec![
             Track::new(&Point::new(1f32, 0f32, 0f32), &0f32),
             Track::new(&Point::new(0f32, 1f32, 0f32), &0f32)]);
+        assert_eq!(c.safe_time, 10f32);
+        assert_eq!(c.bound, 0f32);
+    }
+
+    #[test]
+    fn test_get_safety() {
+
     }
 }

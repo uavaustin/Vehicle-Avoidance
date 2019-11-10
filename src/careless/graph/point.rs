@@ -11,8 +11,8 @@ pub struct Point {
     z: f32,
 }
 
-impl From<(&Location, &Location)> for Point {
-    fn from((location, origin): (&Location, &Location)) -> Self {
+impl<'a> From<(&'a Location, &'a Location)> for Point {
+    fn from((location, origin): (&'a Location, &'a Location)) -> Self {
         Self::new(
             2f32
                 * RADIUS as f32
