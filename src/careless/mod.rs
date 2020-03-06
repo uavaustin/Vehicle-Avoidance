@@ -69,7 +69,7 @@ impl Careless {
 
     fn set_track(&mut self, plane: Vec<Track>) {
         self.trajectory = plane;
-         = self.get_traj_vel;
+        let v = self.get_traj_vel();
         /*
         Self {
             current: self.current,
