@@ -7,11 +7,11 @@ pub struct Point{
 }
 
 impl Point{
-    pub fn new(x:f32, y:f32, z:f32) -> Self {
+    pub fn new(x: &f32, y: &f32, z: &f32) -> Self {
         Self {
-            x,
-            y,
-            z,
+            x: *x,
+            y: *y,
+            z: *z,
         }
     }
 
@@ -47,7 +47,7 @@ mod tests {
         let y = 9.97f32;
         let z = 1.17f32;
 
-        let p = Point::new(x, y, z);
+        let p = Point::new(&x, &y, &z);
 
         assert_eq!(p.get_x() == x && p.get_y() == y && p.get_z() == z, true)
     }
