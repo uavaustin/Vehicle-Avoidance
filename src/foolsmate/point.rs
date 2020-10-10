@@ -36,6 +36,37 @@ impl Point{
     }
 }
 
+#[derive(Copy, Clone, Debug, PartialEq)]
+pub struct Point2D{
+    //Assuming x,y,z are always positive
+    x: f32,
+    y: f32,
+}
+
+impl Point{
+    pub fn new(x: &f32, y: &f32) -> Self {
+        Self {
+            x: *x,
+            y: *y,
+        }
+    }
+
+    pub fn blank() -> Self{
+        Self {
+            x: -1f32,
+            y: -1f32,
+        }
+    }
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
