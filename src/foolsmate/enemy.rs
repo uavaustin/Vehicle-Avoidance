@@ -61,8 +61,6 @@ impl Enemy{
 
         let dx:f32 = self.location.get_x() - self.prev_location.get_x();
         let dy:f32 = self.location.get_y() - self.prev_location.get_y();
-
-        //print!("\ndx: {}, dy: {}\n", dx, dy);
         if dx == 0f32 {
             if dy < 0f32 {
                 self.dir = SOUTH;
@@ -92,6 +90,10 @@ impl Enemy{
 
     pub fn set_dir(&mut self, new_dir: f32) {
         self.dir = new_dir
+    }
+
+    fn to_degrees(&self) -> f32 {
+        self.heading - 90f32
     }
 
 }
