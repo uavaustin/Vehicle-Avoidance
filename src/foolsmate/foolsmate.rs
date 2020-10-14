@@ -39,18 +39,27 @@ fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
     //X-axis: x = 0
     let x_flat:Vector = Vector::new(1f32, 0f32, 0f32);
 
+    let y_flat:Vector = Vector::new(0f32, 1f32, 0f32);
 
-    //Finding the angle between the plane defining the path and the circle and the x and y axis
-    let delta:f32 = z_flat.angle(dir);
+
+    //Finding the angle between the circle and the xy axis
+    let theta:f32 = 90 - z_flat.angle(dir);
 
     //Offset off the heading
-    let alpha:f32 = CONE_THETA * (delta * f32::consts::PI / CONE_THETA).cos() / 2f32;
+    let alpha:f32 = CONE_THETA * (theta.to_radians * f32::consts::PI / CONE_THETA).cos() / 2f32;
 
     //Offset from the x-axis
-    let gamma:f32 = x_flat.angle(dir);
+    let phi:f32 = x_flat.angle(dir);
 
-    //Sector is delta degrees above/below the horizontal with angle alpha facing in the heading of the enemy
-    //NOTE: the plane containing hte path and the center is not necessarily rotated in the same direction as the enemy
+    //Converting from spherical coordinate system to cartesian
+    let x:f32 = theta.to_radians().sin() * phi.to_radians().cos();
+    let y:f32 = theta.to_radians().sin() * phi.to_radians().sin();
+    let z:f32 = theta.to_radians().cos();
+
+    //Add/subtract angle along the plane(dir vector for line defining straight ahead for enemy +/- alpha [along the plane])
+    //Might help to convert alpha from spherical to cartesian but need to ensure the right distance
+
+
 
 
 }

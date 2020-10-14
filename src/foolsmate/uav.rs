@@ -29,6 +29,10 @@ impl UAV {
         self.heading
     }
 
+    pub fn get_pitch(&self) -> f32 {
+        0f32
+    }
+
     pub fn get_location(&self) -> Point {
         self.location
     }
@@ -36,6 +40,8 @@ impl UAV {
     pub fn get_path(&self) -> Vec<Point> {
         self.path.clone()
     }
+
+
 
     //Mutators
     pub fn set_speed(&mut self, new_speed: f32) {

@@ -61,7 +61,7 @@ impl Vector {
         if a > f32::consts::PI / 2{
             a = a - f32::consts::PI / 2;
         }
-        a
+        a.to_degrees()
     }
 
     pub fn dir(&self) -> Vector {
