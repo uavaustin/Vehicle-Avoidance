@@ -24,23 +24,33 @@ pub fn euclidean_dist(first_point:Point, second_point:Point) -> f32 {
         (first_point.get_z().powi(2) - second_point.get_z().powi(2))).sqrt()
 }
 
-//Returns the triangle's theta, the point where the UAV enters the arc, and the point where the UAV exits
+//Returns the triangle's width, the point where the UAV enters the arc, and the point where the UAV exits
 fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
 
     let uav_location:Point = uav.get_location();
     let next_node:Point = uav.get_path()[1];
     let center:Point = enemy.get_location();
 
-    let dir:Vector = Vector::from(uav_location, next_node).cross(Vector::from(uav_location, center));
-    let z_flat:Point = Point::new(0f32, 0f32, center.get_z());
+    //Orthogonal direction vector of the plane
+    let dir:Vector = Vector::from(center, next_node) * Vector::from(center, uav_location);
+    //Flat plane: z = center.get_z()
+    let z_flat:Vector = Vector::new(0f32, 0f32, 1f32);
 
-    //Assumes enemy is travelling horizontally
-    let flat_plane_1:Vector = Vector::new(Point::new(center.get_x()+(enemy.to_degrees() - CONE_THETA).cos(),
-     center.get_y()+(enemy.to_degrees() - CONE_THETA).sin(), center.get_z()), z_flat);
-    let flat_plane_2:Vector = Vector::new(Point::new(center.get_x()+(enemy.to_degrees() + CONE_THETA).cos(),
-     center.get_y()+(enemy.to_degrees() + CONE_THETA).sin(), center.get_z(), z_flat);
-    let flat_plane:Vector = Vector::from(first_plane_1, );
+    //X-axis: x = 0
+    let x_flat:Vector = Vector::new(1f32, 0f32, 0f32);
 
-    let alpha:f32 = CONE_THETA * (delta * f32::consts::PI / CONE_THETA).cos();
+
+    //Finding the angle between the plane defining the path and the circle and the x and y axis
+    let delta:f32 = z_flat.angle(dir);
+
+    //Offset off the heading
+    let alpha:f32 = CONE_THETA * (delta * f32::consts::PI / CONE_THETA).cos() / 2f32;
+
+    //Offset from the x-axis
+    let gamma:f32 = x_flat.angle(dir);
+
+    //Sector is delta degrees above/below the horizontal with angle alpha facing in the heading of the enemy
+    //NOTE: the plane containing hte path and the center is not necessarily rotated in the same direction as the enemy
+
 
 }

@@ -1,5 +1,7 @@
 use super::point::*;
 
+
+//TODO: Add pitch
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Enemy{
     speed: f32,
@@ -8,6 +10,7 @@ pub struct Enemy{
     prev_location: Point,
 }
 
+//TODO: Add pitch
 impl Enemy{
     pub fn new(speed:f32, dir:f32, location:Point) -> Self {
         Self {
@@ -30,6 +33,10 @@ impl Enemy{
 
     pub fn get_dir(&self) -> f32 {
         self.dir
+    }
+
+    pub fn get_pitch(&self) -> f32 {
+        0f32
     }
 
     pub fn get_speed(&self) -> f32 {
@@ -98,6 +105,8 @@ impl Enemy{
 
 }
 
+
+//TODO: Add pitch
 #[cfg(test)]
 mod tests {
 

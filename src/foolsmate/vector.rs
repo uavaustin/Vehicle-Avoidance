@@ -1,10 +1,37 @@
 use std::f32;
+use std::ops::{Mul};
+use super::point::*;
+
 #[derive(Clone, Debug, PartialEq)]
 pub struct Vector{
     i:f32,
     j:f32,
     k:f32,
     magnitude:f32,
+}
+
+impl Mul<f32> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: f32) -> Vector {
+        let new_i = self.i * rhs;
+        let new_j = self.j * rhs;
+        let new_k = self.k * rhs;
+
+        Vector::new(new_i, new_j, new_k);
+    }
+
+}
+
+impl Mul<Vector> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs:Vector) -> Vector {
+        let new_i:f32 = self.get_j() * other.get_k() - self.get_k() * other.get_j();
+        let new_j:f32 = self.get_k() * other.get_i() - self.get_i() * other.get_k();
+        let new_k:f32 = self.get_i() * other.get_j() - self.get_j() * other.get_i();
+        Vector::new(new_i, new_j, new_k)
+    }
 }
 
 impl Vector {
@@ -25,19 +52,21 @@ impl Vector {
         }
     }
 
-    pub fn cross(&self, other:Vector) -> Vector {
-        let new_i:f32 = self.get_j() * other.get_k() - self.get_k() * other.get_j();
-        let new_j:f32 = self.get_k() * other.get_i() - self.get_i() * other.get_k();
-        let new_k:f32 = self.get_i() * other.get_j() - self.get_j() * other.get_i();
-        Vector::new(new_i, new_j, new_k)
-    }
-
     pub fn dot(&self, other:Vector) -> f32 {
         self.get_i() * other.get_i() + self.get_j() * other.get_j() + self.get_k() * other.get_k()
     }
 
     pub fn angle(&self, other:Vector) -> f32 {
-        let mut a:f32 = (self.dot(other) / (self.get_magnitude() * other.get_magnitude)).acos()
+        let mut a:f32 = (self.dot(other) / (self.get_magnitude() * other.get_magnitude)).acos();
+        if a > f32::consts::PI / 2{
+            a = a - f32::consts::PI / 2;
+        }
+        a
+    }
+
+    pub fn dir(&self) -> Vector {
+        let scalar:f32 = 1f32 / self.get_magnitude();
+        self * scalar;
     }
 
     pub fn get_i(&self) -> f32 {

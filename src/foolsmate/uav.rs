@@ -1,5 +1,6 @@
 use super::point::*;
 
+//TODO: Add pitch
 #[derive(Clone, Debug, PartialEq)]
 pub struct UAV {
     speed: f32,
@@ -8,6 +9,7 @@ pub struct UAV {
     path: Vec<Point>,
 }
 
+//TODO: Add pitch
 impl UAV {
     pub fn new(speed: f32, heading: f32, location: Point, path: Vec<Point>) -> Self {
         Self {
@@ -81,6 +83,7 @@ impl UAV {
     }
 }
 
+//TODO: Add pitch
 #[cfg(test)]
 mod tests {
     use super::*;
