@@ -13,7 +13,7 @@ const CONE_THETA:f32 = f32::consts::PI / 4;
 
 //Make appropriate methods private eventually
 pub fn within_sphere(enemy_location:Point, uav:UAV) -> bool {
-    const RADIUS = TIME * uav.get_speed();
+    const RADIUS:f32 = TIME * uav.get_speed();
     let uav_location = uav.get_location();
     euclidean_dist(uav_location, enemy_location) <= RADIUS;
 }
@@ -26,6 +26,7 @@ pub fn euclidean_dist(first_point:Point, second_point:Point) -> f32 {
 
 //Returns the triangle's width, the point where the UAV enters the arc, and the point where the UAV exits
 fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
+    const RADIUS:f32 = TIME * uav.get_speed();
 
     let uav_location:Point = uav.get_location();
     let next_node:Point = uav.get_path()[1];
@@ -43,7 +44,7 @@ fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
 
 
     //Finding the angle between the circle and the xy axis
-    let theta:f32 = 90 - z_flat.angle(dir);
+    let theta:f32 = 90f32 - z_flat.angle(dir);
 
     //Offset off the heading
     let alpha:f32 = CONE_THETA * (theta.to_radians * f32::consts::PI / CONE_THETA).cos() / 2f32;
@@ -58,7 +59,8 @@ fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
 
     //Add/subtract angle along the plane(dir vector for line defining straight ahead for enemy +/- alpha [along the plane])
     //Might help to convert alpha from spherical to cartesian but need to ensure the right distance
-
+    //USE QUATERNIONS
+    let disp:f32 = 2f32 * RADIUS * (alpha).sin();
 
 
 
