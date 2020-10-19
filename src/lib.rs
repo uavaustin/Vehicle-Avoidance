@@ -8,3 +8,4 @@ use foolsmate::enemy::{Enemy};
 use foolsmate::uav::{UAV};
 use foolsmate::foolsmate::{*};
 use foolsmate::vector::{Vector};
+use foolsmate::quaternion::{Quaternion};

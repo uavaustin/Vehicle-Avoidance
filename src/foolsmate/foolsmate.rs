@@ -3,6 +3,7 @@ use super::point::Point2D;
 use super::enemy::Enemy;
 use super::uav::UAV;
 use super::vector::Vector;
+use super::quaternion::Quaternion;
 use std::f32;
 
 //Taking distance in 10 seconds (assuming usits of speed are /s)
@@ -34,6 +35,27 @@ fn slice(uav: UAV, enemy: Enemy) -> (f32, Point, Point) {
 
     //Orthogonal direction vector of the plane
     let dir:Vector = Vector::from(center, next_node) * Vector::from(center, uav_location);
+
+    let mut enemy_dir:Vector = Vector::new(1f32, 0f32, 0f32);
+    let mut enemy_perp:Vector = Vector::new(0f32,1f32,0f32);
+
+    let verical_vector:Vector = Vector::new(0f32,0f32,1f32);
+
+    let horizontal_rotation:Quaternion = Quaternion::new(enemy.to_degrees().to_radians(), vertical_vector);
+
+    enemy_dir = horizontal_rotation.rotate(enemy_dir);
+    enemy_perp = horizontal_rotation.rotate(enemy_perp);
+
+    let vertical_rotation_vector:Vector = Vector::new(enemy.to_degrees().to_radians().cos(), enemy.to_degrees().to_radians().sin(), 0) * vertical_vector;
+
+    let vertical_rotation:Quaternion = Quaternion::new(enemy.get_pitch(), vertical_rotation_vector);
+
+    //Now have a plane containing the projected straight enemy path
+    enemy_dir = veretical_rotation.rotate(enemy_dir);
+    enemy_perp = vertical_rotation.rotate(enemy_perp);
+
+    let enemy_normal:Vector = enemy_dir * enemy_perp;
+
     //Flat plane: z = center.get_z()
     let z_flat:Vector = Vector::new(0f32, 0f32, 1f32);
 

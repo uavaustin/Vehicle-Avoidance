@@ -85,3 +85,5 @@ impl Vector {
         self.magnitude
     }
 }
+
+//TODO: tests
