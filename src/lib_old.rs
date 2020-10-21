@@ -1,49 +1,46 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-// inputs: plane telem, our path
+mod foolsmate;
 
-// checks for intersection between plane_bound and path
+use foolsmate::point::{Point};
+use foolsmate::enemy::{Enemy};
+use foolsmate::uav::{UAV};
+use foolsmate::foolsmate::{*};
+use foolsmate::vector::{Vector};
+use foolsmate::quaternion::{Quaternion};
 
-mod obj;
-mod careless;
-
-use obj::position::{Position};
-use obj::location::{Location};
-use careless::graph::point::{Point};
-
-struct Avoider {
-    now: &'static Vec<Position>,
-}
 
 /*
-impl Avoider {
-    fn from_vec(now: &Vec<Position>) -> Self {
-        Self {
-            now,
-        }
-    }
+Overall algorithm:
 
-    //fn get_velocity() -> float {
-    //
-    //}
+Are evasive manoeuvres necessary?
+Repeats always:
+1. Update enemy and self location
+2. Check if self location within enemy sphere
+3. If yes:
+    3.1. If within closer radius to enemy plane:
+        3.1.1. Place waypoint behind enemy current location (+ certain margin?)
+    3.2. Check if self location on surface of spherical sector projected in front of enemy
+    3.3. If yes:
+        3.3.1. Determine if enemy path intersects UAV path at same time (+/- a margin)
+        3.3.2. If yes:
+            3.3.2.1. Evasive manoeuvres
+        3.3.3. Else:
+            3.3.3.1. Remove evasive waypoints from path
+    3.4. Else:
+        3.4.1. Remove evasive waypoints from path
+4. Else:
+    4.1. If within closer radius to enemy plane:
+        4.1.1. Place waypoint behind enemy current location (+ certain margin?)
+    4.2. Remove evasive waypoints from path
 
-    //fn check_intersection() -> {
-    //
-    //}
-}
 
-#[cfg(test)]
-mod test {
-    use super::*;
+Evasive Manoeuvres (Not yet finalised)
+1. If > certain dist from enemy plane:
+    1.1. Move towards enemy
+    1.2. If @ same altitude as enemy:
+        1.2.1. Move up
+    1.3 Place waypoint
 
-    #[test]
-    fn test_avoidance_from_vec() {
-        let p1 = Position::new(&Location::new(0f32, 0f32, 0f32), &0f32);
-        let p2 = Position::new(&Location::new(1f32, 1f32, 1f32), &1f32);
-        let p3 = Position::new(&Location::new(3f32, 3f32, 3f32), &2f32);
-        let v = vec![p1, p2, p3];
-        let A = Avoider::from_vec(&v);
-    }
-}
 */
