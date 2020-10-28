@@ -5,6 +5,7 @@ mod space;
 
 use space::point::{Point};
 use space::vector::{Vector};
+use space::line::{Line};
 
 /*
 Overall algorithm:

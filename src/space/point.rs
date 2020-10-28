@@ -7,6 +7,9 @@ pub struct Point{
 }
 
 impl Point{
+
+    //Location -> Lat, Long, Alt
+
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Self {
             x: x,
