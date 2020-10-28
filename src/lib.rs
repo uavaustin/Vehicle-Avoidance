@@ -1,11 +1,13 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+mod obj;
 mod space;
 
-use space::point::{Point};
-use space::vector::{Vector};
-use space::line::{Line};
+use obj::craft::Craft;
+use obj::location::Location;
+use space::point::Point;
+use space::vector::Vector;
 
 /*
 Overall algorithm:
