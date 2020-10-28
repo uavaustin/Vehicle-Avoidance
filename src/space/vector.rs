@@ -2,12 +2,27 @@ use super::point::*;
 use std::f32;
 use std::ops::Mul;
 
-#[derive(Clone, Debug, PartialEq, Copy)]
+#[derive(Clone, Debug, Copy)]
 pub struct Vector {
     i: f32,
     j: f32,
     k: f32,
     magnitude: f32,
+}
+
+impl std::cmp::PartialEq for Vector {
+    fn eq(&self, rhs: &Vector) -> bool {
+        const ACCEPTABLE_MARGIN: f32 = 0.01f32;
+        let i_eq: bool = (rhs.get_i() - self.get_i()) == 0f32
+            || ((rhs.get_i() - self.get_i()) / self.get_i()) < ACCEPTABLE_MARGIN;
+
+        let j_eq: bool = (rhs.get_j() - self.get_j()) == 0f32
+            || ((rhs.get_j() - self.get_j()) / self.get_j()) < ACCEPTABLE_MARGIN;
+        let k_eq: bool = (rhs.get_k() - self.get_k()) == 0f32
+            || ((rhs.get_k() - self.get_k()) / self.get_k()) < ACCEPTABLE_MARGIN;
+
+        i_eq && j_eq && k_eq
+    }
 }
 
 impl Mul<f32> for Vector {

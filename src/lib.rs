@@ -7,8 +7,8 @@ mod space;
 use obj::craft::Craft;
 use obj::location::Location;
 use space::point::Point;
+use space::quaternion::Quaternion;
 use space::vector::Vector;
-
 /*
 Overall algorithm:
 
