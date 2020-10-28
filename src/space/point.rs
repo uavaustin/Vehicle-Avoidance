@@ -1,10 +1,25 @@
 use obj::location::Location;
-#[derive(Copy, Clone, Debug, PartialEq)]
+use std::cmp::PartialEq;
+use std::fmt;
+
+#[derive(Copy, Clone, Debug)]
 pub struct Point {
     //Assuming x,y,z are always positive
     x: f32,
     y: f32,
     z: f32,
+}
+
+impl std::cmp::PartialEq for Point {
+    fn eq(&self, rhs: &Point) -> bool {
+        self.x == rhs.get_x() && self.y == rhs.get_y() && self.z == rhs.get_z()
+    }
+}
+
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Point:({}, {}, {}) \n", self.x, self.y, self.z)
+    }
 }
 
 impl Point {
@@ -63,5 +78,27 @@ mod tests {
         let p = Point::new(x, y, z);
 
         assert_eq!(p.get_x() == x && p.get_y() == y && p.get_z() == z, true)
+    }
+
+    #[test]
+    fn create_ref() {
+        let x: f32 = 1f32;
+        let y: f32 = 3f32;
+        let z: f32 = 5f32;
+        let p: Point = Point::define_ref(Location::new(x, y, z));
+        assert_eq!(p, Point::new(111_320f32, 333_960f32, 5f32));
+    }
+
+    #[test]
+    fn compare_ref() {
+        let lat: f32 = 1f32;
+        let lon: f32 = 3f32;
+        let alt: f32 = 5f32;
+        let p: Point = Point::define_ref(Location::new(lat, lon, alt));
+        let x: f32 = 1f32;
+        let y: f32 = 2f32;
+        let z: f32 = 3f32;
+        let p2: Point = Point::from_location(Location::new(x, y, z), p);
+        assert_eq!(p2, Point::new(0f32, -111_320f32, -2f32));
     }
 }
