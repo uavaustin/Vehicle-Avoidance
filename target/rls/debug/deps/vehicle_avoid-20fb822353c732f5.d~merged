@@ -1,0 +1,26 @@
+<<<<<<< Updated upstream
+/Users/oimtiaz/Documents/GitHub/Vehicle-Avoidance/target/rls/debug/deps/vehicle_avoid-20fb822353c732f5.rmeta: src/lib.rs src/obj/mod.rs src/obj/craft.rs src/obj/location.rs src/space/mod.rs src/space/point.rs src/space/quaternion.rs src/space/vector.rs
+
+/Users/oimtiaz/Documents/GitHub/Vehicle-Avoidance/target/rls/debug/deps/vehicle_avoid-20fb822353c732f5.d: src/lib.rs src/obj/mod.rs src/obj/craft.rs src/obj/location.rs src/space/mod.rs src/space/point.rs src/space/quaternion.rs src/space/vector.rs
+
+src/lib.rs:
+src/obj/mod.rs:
+src/obj/craft.rs:
+src/obj/location.rs:
+src/space/mod.rs:
+src/space/point.rs:
+src/space/quaternion.rs:
+src/space/vector.rs:
+=======
+/Users/oimtiaz/Documents/GitHub/Vehicle-Avoidance/target/rls/debug/deps/vehicle_avoid-20fb822353c732f5.rmeta: src/lib.rs src/obj/mod.rs src/obj/location.rs src/careless/mod.rs src/careless/graph/mod.rs src/careless/graph/point.rs src/careless/graph/track.rs
+
+/Users/oimtiaz/Documents/GitHub/Vehicle-Avoidance/target/rls/debug/deps/vehicle_avoid-20fb822353c732f5.d: src/lib.rs src/obj/mod.rs src/obj/location.rs src/careless/mod.rs src/careless/graph/mod.rs src/careless/graph/point.rs src/careless/graph/track.rs
+
+src/lib.rs:
+src/obj/mod.rs:
+src/obj/location.rs:
+src/careless/mod.rs:
+src/careless/graph/mod.rs:
+src/careless/graph/point.rs:
+src/careless/graph/track.rs:
+>>>>>>> Stashed changes
