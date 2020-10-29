@@ -25,6 +25,7 @@ impl FoolsMate {
     pub fn new(uav: Craft, enemy: Craft, path: LinkedList<Node>) -> Self {
         const OUTER_TIME_IN_SECS:f32 = 30f32;
         const INNER_TIME_IN_SECS:f32 = 10f32;
+        const THETA:f32 = std::f32::consts::PI / 4f32;
 
         let ref_point = Point::define_ref(enemy.get_location());
         //Set enemy to be (0,0,0)
@@ -63,6 +64,7 @@ impl FoolsMate {
         self.uav_point.dist(self.enemy_point) <= MAX_DIST;
     }
     
+    //Postcondition: XYZ space is rotated such that the enemy heading is directly oriented along the x-axis
     fn rotate_space(&mut self) {
         self.uav_point = Point::from_vector(self.rotation.rotate_vector(Vector::from_point(self.uav_point)));
         //Does rotating the heading vector return the correct vector? 
@@ -72,6 +74,11 @@ impl FoolsMate {
         for point in self.path.iter_mut() {
             point = self.rotation.rotate_vector(Vector::from_point(point));
         }
+    }
+
+    //Check if the fastest time it could reach (within the sector) is < time to exit the sector?
+    fn within_sector(&self) -> bool {
+        
     }
 }
 
@@ -83,3 +90,20 @@ impl FoolsMate {
 //pub func evade(self:Craft, enemy:Craft) -> Vector<??>
 
 //pub func evadeClose(self:Craft, enemy:Craft) -> Vector<??>
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    /* What needs to be tested:
+    Is the rotation angle for the quaternion backwards (turns in opposite direction)
+
+
+    */
+    
+    #[test]
+    fn test_rotation() {
+        
+    }
+}

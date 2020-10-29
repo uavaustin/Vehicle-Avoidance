@@ -16,7 +16,7 @@ impl fmt::Display for Quaternion {
             "Quaternion:(Real: {}, Imaginary: {}) \n",
             self.real,
             self.get_imaginary()
-        );
+        )
     }
 }
 
