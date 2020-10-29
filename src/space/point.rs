@@ -27,6 +27,7 @@ impl Point {
         Self { x: x, y: y, z: z }
     }
 
+    //NOTE -> THESE TRANSFORMATIONS ARE THE VALUES AT THE EQUATOR AND MAY NOT EXACTLY CORRESPOND TO SCALE IRL
     pub fn from_location(location: Location, ref_point: Point) -> Self {
         /*
         1 unit = 1 m
@@ -49,6 +50,13 @@ impl Point {
         let y: f32 = location.lon() * SCALE_FACTOR;
         let z: f32 = location.alt();
         Self { x: x, y: y, z: z }
+    }
+
+    pub fn dist(&self, second: Point) -> f32 {
+        let x_diff: f32 = (second.get_x() - self.get_x()).powi(2);
+        let y_diff: f32 = (second.get_y() - self.get_y()).powi(2);
+        let z_diff: f32 = (second.get_z() - self.get_z()).powi(2);
+        (x_diff + y_diff + z_diff).sqrt()
     }
 
     pub fn get_x(&self) -> f32 {

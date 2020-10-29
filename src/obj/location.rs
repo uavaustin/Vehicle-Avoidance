@@ -1,10 +1,22 @@
 // make fields private later
-
+use std::fmt;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Location {
     lat: f32,
     lon: f32,
     alt: f32,
+}
+
+impl fmt::Display for Location {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "(lat: {}, lon: {}, alt: {}",
+            self.lat,
+            self.lon,
+            self.alt()
+        )
+    }
 }
 
 impl Location {
