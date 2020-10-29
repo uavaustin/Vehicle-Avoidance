@@ -9,6 +9,12 @@ use obj::location::Location;
 use space::point::Point;
 use space::quaternion::Quaternion;
 use space::vector::Vector;
+
+/*
+To-do:
+Redefine equality / operations to round to correct sig figs
+*/
+
 /*
 Overall algorithm:
 
