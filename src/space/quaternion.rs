@@ -9,6 +9,16 @@ pub struct Quaternion {
     j: f32,
     k: f32,
 }
+impl fmt::Display for Quaternion {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Quaternion:(Real: {}, Imaginary: {}) \n",
+            self.real,
+            self.get_imaginary()
+        );
+    }
+}
 
 impl std::cmp::PartialEq for Quaternion {
     fn eq(&self, rhs: &Quaternion) -> bool {

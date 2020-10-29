@@ -1,4 +1,5 @@
 use obj::location::Location;
+use space::vector::Vector;
 use std::cmp::PartialEq;
 use std::fmt;
 
@@ -18,7 +19,7 @@ impl std::cmp::PartialEq for Point {
 
 impl fmt::Display for Point {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Point:({}, {}, {}) \n", self.x, self.y, self.z)
+        write!(f, "Point:({}, {}, {})\n", self.x, self.y, self.z)
     }
 }
 
@@ -42,6 +43,14 @@ impl Point {
         let z: f32 = location.alt() - ref_point.get_z();
 
         Self { x: x, y: y, z: z }
+    }
+
+    pub fn from_vector(vector: Vector) -> Self {
+        Self {
+            x: vector.get_i(),
+            y: vector.get_j(),
+            z: vector.get_k(),
+        }
     }
 
     pub fn define_ref(location: Location) -> Self {

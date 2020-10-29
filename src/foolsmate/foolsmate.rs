@@ -6,12 +6,11 @@ use space::vector::Vector;
 use space::quaternion::Quaternion;
 
 pub struct FoolsMate {
-    uav: Craft,
-    enemy: Craft,
-    path: LinkedList<Node>,
-    ref_point: Point,
+    path: LinkedList<Point>,
     enemy_point: Point
     uav_point: Point,
+    enemy_heading: Vector,
+    uav_heading: Vector,
     rotation: Quaternion,
 }
 
@@ -36,13 +35,18 @@ impl FoolsMate {
         let rotation_axis:Vector = x_axis.cross(enemy.get_heading());
         let angle:f32 = enemy.get_heading().angle(x_axis) / 2f32;
         let rotation:Quaternion = Quaternion::rotation(angle, rotation_axis);
+        let mut point_path:LinkedList<Point> = LinkedList::new();
+
+        for node in path.iter() {
+            point_path.push_back(Point::from_location(node.get_location(), ref_point));
+        }
         Self {
-            uav: uav,
-            enemy: enemy,
-            path: path,
+            path: point_path,
             ref_point: ref_point,
             enemy_point: enemy_point,
             uav_point: uav_point,
+            enemy_heading: enemy.get_heading(),
+            uav_heading: uav.get_heading(),
             rotation : rotation,
         }
     }
@@ -60,7 +64,14 @@ impl FoolsMate {
     }
     
     fn rotate_space(&mut self) {
-        //ROTATE EVERYTHING
+        self.uav_point = Point::from_vector(self.rotation.rotate_vector(Vector::from_point(self.uav_point)));
+        //Does rotating the heading vector return the correct vector? 
+        self.uav_heading = self.rotation.rotate_vector(self.uav_heading);
+        self.enemy_heading = self.rotation.rotate_vector(self.enemy_heading);
+
+        for point in self.path.iter_mut() {
+            point = self.rotation.rotate_vector(Vector::from_point(point));
+        }
     }
 }
 

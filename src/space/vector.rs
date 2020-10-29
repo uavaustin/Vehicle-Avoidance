@@ -1,5 +1,6 @@
 use super::point::*;
 use std::f32;
+use std::fmt;
 use std::ops::Mul;
 
 #[derive(Clone, Debug, Copy)]
@@ -8,6 +9,12 @@ pub struct Vector {
     j: f32,
     k: f32,
     magnitude: f32,
+}
+
+impl fmt::Display for Vector {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Vector:({}, {}, {})\n", self.i, self.j, self.k)
+    }
 }
 
 impl std::cmp::PartialEq for Vector {
@@ -66,6 +73,18 @@ impl Vector {
             magnitude: ((first.get_x() - second.get_x()) * (first.get_x() - second.get_x())
                 + (first.get_y() - second.get_y()) * (first.get_y() - second.get_y())
                 + (first.get_z() - second.get_z()) * (first.get_z() - second.get_z()))
+            .sqrt(),
+        }
+    }
+
+    pub fn from_point(point: Point) -> Self {
+        Self {
+            i: point.get_x(),
+            j: point.get_y(),
+            k: point.get_z(),
+            magnitude: (point.get_x() * point.get_x()
+                + point.get_y() * point.get_y()
+                + point.get_z() * point.get_z())
             .sqrt(),
         }
     }

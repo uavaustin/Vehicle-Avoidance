@@ -11,4 +11,8 @@ impl Node {
             modified: modified,
         }
     }
+
+    pub fn get_location(&self) -> Location {
+        self.location
+    }
 }
