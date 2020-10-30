@@ -106,9 +106,9 @@ impl FoolsMate {
     }
 
     //Checks if UAV is within triangle defined by x-axis and the outer arm of the path
-
     fn uav_within_sector(&self) -> bool {
         self.uav_point.get_y() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
+            && self.uav_point.get_z() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
     }
 }
 
