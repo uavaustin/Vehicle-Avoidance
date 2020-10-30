@@ -1,9 +1,12 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+mod foolsmate;
 mod obj;
 mod space;
 
+use foolsmate::foolsmate::FoolsMate;
+use foolsmate::node::Node;
 use obj::craft::Craft;
 use obj::location::Location;
 use space::point::Point;

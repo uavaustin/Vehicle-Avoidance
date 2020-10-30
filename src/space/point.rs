@@ -13,7 +13,16 @@ pub struct Point {
 
 impl std::cmp::PartialEq for Point {
     fn eq(&self, rhs: &Point) -> bool {
-        self.x == rhs.get_x() && self.y == rhs.get_y() && self.z == rhs.get_z()
+        const ACCEPTABLE_MARGIN: f32 = 0.01f32;
+        let x_eq: bool = (rhs.get_x() - self.get_x()) == 0f32
+            || ((rhs.get_x() - self.get_x()) / self.get_x()) < ACCEPTABLE_MARGIN;
+
+        let y_eq: bool = (rhs.get_y() - self.get_y()) == 0f32
+            || ((rhs.get_y() - self.get_y()) / self.get_y()) < ACCEPTABLE_MARGIN;
+        let z_eq: bool = (rhs.get_z() - self.get_z()) == 0f32
+            || ((rhs.get_z() - self.get_z()) / self.get_z()) < ACCEPTABLE_MARGIN;
+
+        x_eq && y_eq && z_eq
     }
 }
 

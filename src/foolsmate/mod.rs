@@ -1,5 +1,5 @@
 pub mod foolsmate;
 pub mod node;
 
-use foolsmate::FoolsMate;
-use node::Node;
+use self::foolsmate::FoolsMate;
+use self::node::Node;
