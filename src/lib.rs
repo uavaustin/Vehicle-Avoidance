@@ -3,15 +3,14 @@
 
 mod foolsmate;
 mod obj;
-mod space;
 
 use foolsmate::foolsmate::FoolsMate;
 use foolsmate::node::Node;
+use foolsmate::space::point::Point;
+use foolsmate::space::quaternion::Quaternion;
+use foolsmate::space::vector::Vector;
 use obj::craft::Craft;
 use obj::location::Location;
-use space::point::Point;
-use space::quaternion::Quaternion;
-use space::vector::Vector;
 
 /*
 To-do:

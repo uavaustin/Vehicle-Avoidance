@@ -1,6 +1,6 @@
+use foolsmate::space::point::Point;
+use foolsmate::space::vector::Vector;
 use obj::location::Location;
-use space::point::Point;
-use space::vector::Vector;
 use std::fmt;
 
 #[derive(Clone, Copy, Debug, PartialEq)]

@@ -1,9 +1,9 @@
 use foolsmate::node::Node;
+use foolsmate::space::point::Point;
+use foolsmate::space::quaternion::Quaternion;
+use foolsmate::space::vector::Vector;
 use obj::craft::Craft;
 use obj::location::Location;
-use space::point::Point;
-use space::quaternion::Quaternion;
-use space::vector::Vector;
 use std::collections::LinkedList;
 
 pub struct FoolsMate {
@@ -125,12 +125,6 @@ impl FoolsMate {
 mod tests {
 
     use super::*;
-
-    /* What needs to be tested:
-    Is the rotation angle for the quaternion backwards (turns in opposite direction)
-
-    Do the rotations work????
-    */
     fn create_fm() -> FoolsMate {
         let mut path: LinkedList<Point> = LinkedList::new();
         for x in 0..10 {
