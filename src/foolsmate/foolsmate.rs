@@ -25,8 +25,6 @@ Either need to change scale factor or scale the telemetry data
 */
 impl FoolsMate {
     const THETA: f32 = std::f32::consts::PI / 4f32;
-    const OUTER_TIME_IN_SECS: f32 = 30f32;
-    const INNER_TIME_IN_SECS: f32 = 10f32;
 
     pub fn new(uav: Craft, enemy: Craft, path: LinkedList<Node>) -> Self {
         let ref_point = Point::define_ref(enemy.get_location());
@@ -79,17 +77,6 @@ impl FoolsMate {
         }
     }
 
-    fn within_inner_sphere(&self) -> bool {
-        let enemy_speed: f32 = self.enemy_heading.get_magnitude();
-        let max_dist: f32 = enemy_speed * FoolsMate::OUTER_TIME_IN_SECS;
-        self.uav_point.dist(self.enemy_point) <= max_dist
-    }
-
-    fn within_outer_sphere(&self) -> bool {
-        let enemy_speed: f32 = self.enemy_heading.get_magnitude();
-        let max_dist: f32 = enemy_speed * FoolsMate::INNER_TIME_IN_SECS;
-        self.uav_point.dist(self.enemy_point) <= max_dist
-    }
     //Postcondition: XYZ space is rotated such that the enemy heading is directly oriented along the x-axis
     fn rotate_space(&mut self) {
         self.uav_point = Point::from_vector(
@@ -106,18 +93,21 @@ impl FoolsMate {
     }
 
     //Checks if UAV is within triangle defined by x-axis and the outer arm of the path
+    //Return true iff you are within the sector since we have already checked the radius
     fn uav_within_sector(&self) -> bool {
         self.uav_point.get_y() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
             && self.uav_point.get_z() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
     }
 
     //Checks if UAV needs to change course while it is within a sector of the cylinder
-    fn change_course(self, enemy: Craft) -> bool {
-        let ENEMY_SPEED: f32 = enemy.get_heading().get_magnitude();
+    fn change_course(&self) -> bool {
+        let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
         // * Add code to get the exit point from next WayPoint D(x2,y2,z2)
         // * Initialize uav_point_exit of type Point
+
+        //ADDED AS PLACEHOLDER
         let uav_point_exit = Point::new(0f32, 0f32, 0f32);
         let dist_vec: Vector = Vector::from(self.uav_point, uav_point_exit);
         let dist: f32 = dist_vec.get_magnitude();
@@ -130,14 +120,28 @@ impl FoolsMate {
         let uav_path_time: f32 = dist / vel;
         false
     }
-}
 
-//impl FoolsMate
+    //Possible Optimisation: Find closest point on cone and take normal
+
+    //A waypoint above/below the enemy plane and (slightly) within the sphere
+    //To account for the enemy moving between checks
+    fn evade(&mut self, vertical: bool) {
+        const HORIZONTAL_INSET: f32 = 0.5f32;
+        //2 meters above or below
+        let vertical: f32 = 2f32 * ((vertical as i8) * 2) as f32 - 1f32;
+        let horizontal: f32 = vertical / FoolsMate::THETA.tan() + HORIZONTAL_INSET;
+        let new_waypoint: Point = Point::new(horizontal, horizontal, vertical);
+        let first_point: Option<Point> = self.path.pop_front();
+        self.path.push_front(new_waypoint);
+        match first_point {
+            Some(p) => self.path.push_front(p),
+            None => (),
+        }
+    }
+}
 
 //Check if closest point on current path of enemy plane is within the sector?
 //pub func withinSector(self:Craft, enemy:Craft) -> bool
-
-//pub func evade(self:Craft, enemy:Craft) -> Vector<??>
 
 //pub func evadeClose(self:Craft, enemy:Craft) -> Vector<??>
 
