@@ -111,6 +111,7 @@ impl FoolsMate {
             && self.uav_point.get_z() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
     }
 
+    /*
     //Checks if UAV needs to change course while it is within a sector of the cylinder
     fn change_course(self, enemy: Craft) -> bool {
         let ENEMY_SPEED: f32 = enemy.get_heading().magnitude();
@@ -128,6 +129,7 @@ impl FoolsMate {
         // Assuming constant velocity (neglecting drag for now)
         let uav_path_time: f32 = dist / vel;
     }
+    */
 }
 
 //impl FoolsMate

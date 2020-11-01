@@ -9,6 +9,7 @@ use foolsmate::node::Node;
 use foolsmate::space::point::Point;
 use foolsmate::space::quaternion::Quaternion;
 use foolsmate::space::vector::Vector;
+use foolsmate::sphere::Sphere;
 use obj::craft::Craft;
 use obj::location::Location;
 
