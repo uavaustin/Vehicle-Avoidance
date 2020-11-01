@@ -110,6 +110,23 @@ impl FoolsMate {
         self.uav_point.get_y() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
             && self.uav_point.get_z() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
     }
+    //Checks if UAV needs to change course while it is within a sector of the cylinder
+    fn change_course(self:Craft, enemy:Craft) -> bool {
+        let ENEMY_SPEED:f32 = enemy.get_heading().magnitude();
+        let UAV_SPEED:f32 = self.uav_heading.magnitude();
+
+        // * Add code to get the exit point from next WayPoint D(x2,y2,z2)
+        // * Initialize uav_point_exit of type Point
+        let dist_vec:Vector = Vector::from(self.uav_point, uav_point_exit);
+        let dist:f32 = dist_vec.get_magnitude();
+        let dist_unit_vec:Vector = dist_vec.to_dir(dist_vec);
+
+        let vel_vec:Vector = dist_unit_vec * UAV_SPEED;
+        let vel:f32 = vel_vec.get_magnitude();
+
+        // Assuming constant velocity (neglecting drag for now)
+        let uav_path_time:f32 = dist/vel;
+    }
 }
 
 //impl FoolsMate
