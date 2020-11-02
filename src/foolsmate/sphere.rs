@@ -24,4 +24,12 @@ impl Sphere {
     fn within_outer_sphere(&self, uav_point: Point, enemy_point: Point) -> bool {
         uav_point.dist(enemy_point) <= self.outer_radius
     }
+
+    pub fn get_outer_radius(&self) -> f32 {
+        self.outer_radius
+    }
+
+    pub fn get_inner_radius(&self) -> f32 {
+        self.inner_radius
+    }
 }

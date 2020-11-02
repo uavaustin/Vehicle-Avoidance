@@ -2,6 +2,7 @@ use foolsmate::node::Node;
 use foolsmate::space::point::Point;
 use foolsmate::space::quaternion::Quaternion;
 use foolsmate::space::vector::Vector;
+use foolsmate::sphere::Sphere;
 use obj::craft::Craft;
 use obj::location::Location;
 use std::collections::LinkedList;
@@ -14,6 +15,7 @@ pub struct FoolsMate {
     uav_heading: Vector,
     rotation: Quaternion,
     ref_point: Point,
+    sphere: Sphere,
 }
 
 /*
@@ -46,6 +48,7 @@ impl FoolsMate {
         for node in path.iter() {
             point_path.push_back(Point::from_location(node.get_location(), ref_point));
         }
+        let sphere: Sphere = Sphere::new(enemy.get_heading());
         Self {
             path: point_path,
             ref_point: ref_point,
@@ -54,6 +57,7 @@ impl FoolsMate {
             enemy_heading: enemy.get_heading(),
             uav_heading: uav.get_heading(),
             rotation: rotation,
+            sphere: sphere,
         }
     }
 
@@ -65,6 +69,7 @@ impl FoolsMate {
         uav_heading: Vector,
         path: LinkedList<Point>,
         rotation: Quaternion,
+        sphere: Sphere,
     ) -> Self {
         Self {
             path: path,
@@ -74,6 +79,7 @@ impl FoolsMate {
             enemy_heading: enemy_heading,
             uav_heading: uav_heading,
             rotation: rotation,
+            sphere: sphere,
         }
     }
 
@@ -138,6 +144,43 @@ impl FoolsMate {
             None => (),
         }
     }
+
+    fn evade_close(&mut self) {
+        // Find exit point of path through circle
+        let r: f32 = self.sphere.get_inner_radius();
+
+        let x1: f32 = self.uav_point.get_x();
+        let y1: f32 = self.uav_point.get_y();
+        let z1: f32 = self.uav_point.get_z();
+
+        let x: f32 = self.uav_heading.get_i();
+        let y: f32 = self.uav_heading.get_j();
+        let z: f32 = self.uav_heading.get_k();
+
+        let a: f32 = x * x + y * y + z * z;
+        let b: f32 = 2f32 * (x * x1 + y * y1 + z * z1);
+        let c: f32 = x1 * x1 + y1 * y1 + z1 * z1 + r * r;
+        let disc: f32 = b * b - 4f32 * a * c;
+        if disc > 0f32 {
+            let sq: f32 = disc.sqrt();
+            let exit_lambda: f32 = (-b + sq) / (2f32 * a);
+            let half_lambda: f32 = exit_lambda / 2f32;
+            let half_point: Point = Point::new(
+                x1 + half_lambda * x,
+                y1 + half_lambda * y,
+                z1 + half_lambda * z,
+            );
+            let surface: Vector =
+                Vector::from(self.enemy_point, half_point).to_dir() * (11f32 / 10f32) * r;
+            let surface_point: Point = Point::from_vector(surface);
+            let first_point: Option<Point> = self.path.pop_front();
+            self.path.push_front(surface_point);
+            match first_point {
+                Some(p) => self.path.push_front(p),
+                None => (),
+            }
+        }
+    }
 }
 
 //Check if closest point on current path of enemy plane is within the sector?
@@ -162,6 +205,7 @@ mod tests {
         let axis: Vector = Vector::new(0f32, 0f32, 1f32);
         let angle: f32 = std::f32::consts::PI / 4f32;
         let rotation: Quaternion = Quaternion::rotation(angle, axis);
+        let sphere: Sphere = Sphere::new(enemy_heading);
         FoolsMate::define(
             ref_point,
             enemy_point,
@@ -170,6 +214,7 @@ mod tests {
             uav_heading,
             path,
             rotation,
+            sphere,
         )
     }
     #[test]
