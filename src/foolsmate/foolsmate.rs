@@ -6,6 +6,7 @@ use foolsmate::sphere::Sphere;
 use obj::craft::Craft;
 use obj::location::Location;
 use std::collections::LinkedList;
+use std::ops::Mul;
 
 pub struct FoolsMate {
     path: LinkedList<Point>,
@@ -107,24 +108,44 @@ impl FoolsMate {
 
     //Checks if UAV needs to change course while it is within a sector of the cylinder
     fn change_course(&self) -> bool {
+        //Should we be using velocity instead of heading here?
         let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
-        // * Add code to get the exit point from next WayPoint D(x2,y2,z2)
-        // * Initialize uav_point_exit of type Point
+        //Add code to compute beta for rotating sector & complicated math
 
-        //ADDED AS PLACEHOLDER
-        let uav_point_exit = Point::new(0f32, 0f32, 0f32);
+        //Place holder for exit point
+        let uav_point_exit: Point = Point::new(1f32, 1f32, 1f32);
         let dist_vec: Vector = Vector::from(self.uav_point, uav_point_exit);
         let dist: f32 = dist_vec.get_magnitude();
         let dist_unit_vec: Vector = dist_vec.to_dir();
-
         let vel_vec: Vector = dist_unit_vec * UAV_SPEED;
         let vel: f32 = vel_vec.get_magnitude();
-
         // Assuming constant velocity (neglecting drag for now)
         let uav_path_time: f32 = dist / vel;
-        false
+
+        //Computes how long the enemy will take to reach uav, considering enemy's heading and
+        //bisection of the sector
+        let dist_vec_btwn_us: Vector = Vector::from(self.uav_point, self.enemy_point);
+        let dist_btwn_us: f32 = dist_vec_btwn_us.get_magnitude();
+        let alpha: f32 = (((FoolsMate::THETA / 2f32).sin() / dist) * dist_btwn_us).asin();
+        let beta: f32 = 2f32*std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
+        let dist_vec_to_end: Vector = Vector::from(self.enemy_point, uav_point_exit);
+        let dist_to_end: f32 = dist_vec_to_end.get_magnitude();
+        let enemy_path: f32 = (dist_to_end / beta.sin())*alpha.sin();
+        let enemy_unit_vec: Vector = self.enemy_heading.to_dir();
+        let enemy_dist_vec: Vector = enemy_unit_vec * enemy_path;
+        let enemy_dist: f32 = enemy_dist_vec.get_magnitude();
+        //Time it takes for the enemy to reach a point (computed by bisecting the sector)
+        // on our line of path, assuming constant speed and no drag
+        let enemy_path_time: f32 = enemy_dist / ENEMY_SPEED;
+
+        if enemy_path_time > uav_path_time {
+            false
+        } else {
+            true
+        }
+
     }
 
     //Possible Optimisation: Find closest point on cone and take normal
