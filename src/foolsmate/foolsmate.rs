@@ -137,10 +137,24 @@ impl FoolsMate {
         let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
-        //Add code to compute beta for rotating sector & complicated math
-
         //Place holder for exit point
         let uav_point_exit: Point = Point::new(1f32, 1f32, 1f32);
+
+        //Compute beta and vectors to rotate the sector
+        let norm: Vector = Vector::cross(Vector::from_point(self.uav_point), Vector::from_point(uav_point_exit));
+        let radius: f32 = self.sphere.get_inner_radius();
+        let z: Vector =  Vector::new(0f32,0f32,1f32);
+        let alpha_uav: f32 = norm.angle(z).to_radians();
+        let beta_uav: f32 = FoolsMate::THETA * (std::f32::consts::PI*0.5*(1.0/FoolsMate::THETA)*alpha_uav).cos();
+        // add lambda
+        let length_1:Vector = Vector::new(1f32+radius,radius,radius);
+        //Use Quaternion to rotate the sector by beta_uav along z
+        let length_2: Vector = self.rotation.rotate_vector(length_1);
+        let a: Vector = Vector::cross(norm, z);
+        let length_1_rot = self.rotation.rotate_vector(a);
+        let length_2_rot = self.rotation.rotate_vector(a);
+
+
         let dist_vec: Vector = Vector::from(self.uav_point, uav_point_exit);
         let dist: f32 = dist_vec.get_magnitude();
         let dist_unit_vec: Vector = dist_vec.to_dir();
@@ -154,10 +168,10 @@ impl FoolsMate {
         let dist_vec_btwn_us: Vector = Vector::from(self.uav_point, self.enemy_point);
         let dist_btwn_us: f32 = dist_vec_btwn_us.get_magnitude();
         let alpha: f32 = (((FoolsMate::THETA / 2f32).sin() / dist) * dist_btwn_us).asin();
-        let beta: f32 = 2f32 * std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
+        let beta: f32 = 2f32*std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
         let dist_vec_to_end: Vector = Vector::from(self.enemy_point, uav_point_exit);
         let dist_to_end: f32 = dist_vec_to_end.get_magnitude();
-        let enemy_path: f32 = (dist_to_end / beta.sin()) * alpha.sin();
+        let enemy_path: f32 = (dist_to_end / beta.sin())*alpha.sin();
         let enemy_unit_vec: Vector = self.enemy_heading.to_dir();
         let enemy_dist_vec: Vector = enemy_unit_vec * enemy_path;
         let enemy_dist: f32 = enemy_dist_vec.get_magnitude();
@@ -170,6 +184,7 @@ impl FoolsMate {
         } else {
             true
         }
+
     }
 
     //Possible Optimisation: Find closest point on cone and take normal
