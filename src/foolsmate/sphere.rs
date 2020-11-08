@@ -17,11 +17,11 @@ impl Sphere {
         }
     }
 
-    fn within_inner_sphere(&self, uav_point: Point, enemy_point: Point) -> bool {
+    pub fn within_inner_sphere(&self, uav_point: Point, enemy_point: Point) -> bool {
         uav_point.dist(enemy_point) <= self.inner_radius
     }
 
-    fn within_outer_sphere(&self, uav_point: Point, enemy_point: Point) -> bool {
+    pub fn within_outer_sphere(&self, uav_point: Point, enemy_point: Point) -> bool {
         uav_point.dist(enemy_point) <= self.outer_radius
     }
 

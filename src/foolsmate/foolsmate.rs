@@ -84,6 +84,24 @@ impl FoolsMate {
         }
     }
 
+    fn foolsmate(&mut self) -> &LinkedList<Point> {
+        if self
+            .sphere
+            .within_outer_sphere(self.uav_point, self.enemy_point)
+        {
+            self.rotate_space();
+            if self.uav_within_sector(FoolsMate::THETA) && self.change_course() {
+                self.evade();
+            } else if self
+                .sphere
+                .within_inner_sphere(self.uav_point, self.enemy_point)
+            {
+                self.evade_close();
+            }
+        }
+        &self.path
+    }
+
     //Postcondition: XYZ space is rotated such that the enemy heading is directly oriented along the x-axis
     fn rotate_space(&mut self) {
         self.uav_point = Point::from_vector(
@@ -99,11 +117,18 @@ impl FoolsMate {
         }
     }
 
+    fn revert_space(&mut self) {
+        self.rotation = self.rotation.get_conjugate();
+        self.rotate_space();
+    }
+
     //Checks if UAV is within triangle defined by x-axis and the outer arm of the path
     //Return true iff you are within the sector since we have already checked the radius
-    fn uav_within_sector(&self) -> bool {
-        self.uav_point.get_y() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
-            && self.uav_point.get_z() <= (FoolsMate::THETA / 2f32).tan() * self.uav_point.get_x()
+    fn uav_within_sector(&self, angle: f32) -> bool {
+        self.uav_point.get_x() >= 0f32
+            && self.uav_point.get_y() >= 0f32
+            && self.uav_point.get_y() <= (angle / 2f32).tan() * self.uav_point.get_x()
+            && self.uav_point.get_z() <= (angle / 2f32).tan() * self.uav_point.get_x()
     }
 
     //Checks if UAV needs to change course while it is within a sector of the cylinder
@@ -129,10 +154,10 @@ impl FoolsMate {
         let dist_vec_btwn_us: Vector = Vector::from(self.uav_point, self.enemy_point);
         let dist_btwn_us: f32 = dist_vec_btwn_us.get_magnitude();
         let alpha: f32 = (((FoolsMate::THETA / 2f32).sin() / dist) * dist_btwn_us).asin();
-        let beta: f32 = 2f32*std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
+        let beta: f32 = 2f32 * std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
         let dist_vec_to_end: Vector = Vector::from(self.enemy_point, uav_point_exit);
         let dist_to_end: f32 = dist_vec_to_end.get_magnitude();
-        let enemy_path: f32 = (dist_to_end / beta.sin())*alpha.sin();
+        let enemy_path: f32 = (dist_to_end / beta.sin()) * alpha.sin();
         let enemy_unit_vec: Vector = self.enemy_heading.to_dir();
         let enemy_dist_vec: Vector = enemy_unit_vec * enemy_path;
         let enemy_dist: f32 = enemy_dist_vec.get_magnitude();
@@ -145,17 +170,17 @@ impl FoolsMate {
         } else {
             true
         }
-
     }
 
     //Possible Optimisation: Find closest point on cone and take normal
 
     //A waypoint above/below the enemy plane and (slightly) within the sphere
     //To account for the enemy moving between checks
-    fn evade(&mut self, vertical: bool) {
+    fn evade(&mut self) {
         const HORIZONTAL_INSET: f32 = 0.5f32;
         //2 meters above or below
-        let vertical: f32 = 2f32 * ((vertical as i8) * 2) as f32 - 1f32;
+        let vertical: f32 =
+            2f32 * (((self.uav_point.get_z() >= self.enemy_point.get_z()) as i8) * 2) as f32 - 1f32;
         let horizontal: f32 = vertical / FoolsMate::THETA.tan() + HORIZONTAL_INSET;
         let new_waypoint: Point = Point::new(horizontal, horizontal, vertical);
         let first_point: Option<Point> = self.path.pop_front();
@@ -218,7 +243,7 @@ mod tests {
         for x in 0..10 {
             path.push_back(Point::new(10f32, x as f32, 0f32));
         }
-        let uav_point: Point = Point::new(10f32, 0f32, 0f32);
+        let uav_point: Point = Point::new(6f32, -6f32, 0f32);
         let enemy_point: Point = Point::new(0f32, 0f32, 0f32);
         let ref_point: Point = Point::new(0f32, 0f32, 0f32);
         let enemy_heading: Vector = Vector::new(1f32, 0f32, 0f32);
@@ -242,12 +267,33 @@ mod tests {
     fn test_rotation() {
         let mut fm: FoolsMate = create_fm();
         fm.rotate_space();
-        assert_eq!(fm.uav_point, Point::new(0f32, 10f32, 0f32));
+        assert_eq!(fm.uav_point, Point::new(6f32, 6f32, 0f32));
         let mut path: LinkedList<Point> = fm.path;
         for i in 0..path.len() {
             let left = path.pop_front();
             let right: Point = Point::new(-1f32 * i as f32, 10f32, 0f32);
             assert_eq!(left, Some(right));
         }
+        fm.path = path;
+        fm.revert_space();
+        assert_eq!(fm.uav_point, Point::new(6f32, -6f32, 0f32));
+    }
+
+    #[test]
+    fn test_evade() {
+        let mut fm: FoolsMate = create_fm();
+        let angle: f32 = std::f32::consts::PI / 2f32;
+        fm.rotate_space();
+        assert_eq!(
+            fm.sphere.within_outer_sphere(fm.uav_point, fm.enemy_point),
+            true
+        );
+        assert_eq!(fm.uav_within_sector(angle), true);
+        let mut old_path: LinkedList<Point> = LinkedList::new();
+        for point in fm.path.iter() {
+            old_path.push_back(*point);
+        }
+        fm.evade();
+        assert_ne!(fm.path, old_path);
     }
 }
