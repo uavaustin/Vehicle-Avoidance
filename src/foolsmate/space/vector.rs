@@ -93,6 +93,14 @@ impl Vector {
         self.get_i() * other.get_i() + self.get_j() * other.get_j() + self.get_k() * other.get_k()
     }
 
+    pub fn cross(first: Vector, second: Vector) -> Vector {
+        let i_new: f32 =  (first.get_j()*second.get_k()) - (first.get_k()*second.get_j());
+        let j_new: f32 =  (first.get_k()*second.get_i()) - (first.get_i()*second.get_k());
+        let k_new: f32 =  (first.get_i()*second.get_j()) - (first.get_j()*second.get_i());
+        let norm: Vector = Vector::new(i_new, j_new , k_new);
+        norm
+    }
+
     pub fn angle(&self, other: Vector) -> f32 {
         let mut a: f32 = (self.dot(other) / (self.get_magnitude() * other.get_magnitude())).acos();
         if a > f32::consts::PI / 2f32 {
