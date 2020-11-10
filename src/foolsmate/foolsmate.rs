@@ -137,7 +137,7 @@ impl FoolsMate {
         let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
-        //Place holder for exit point
+        // temporary holder
         let uav_point_exit: Point = Point::new(1f32, 1f32, 1f32);
 
         //Compute beta and vectors to rotate the sector
@@ -153,7 +153,6 @@ impl FoolsMate {
         let a: Vector = Vector::cross(norm, z);
         let length_1_rot = self.rotation.rotate_vector(a);
         let length_2_rot = self.rotation.rotate_vector(a);
-
 
         let dist_vec: Vector = Vector::from(self.uav_point, uav_point_exit);
         let dist: f32 = dist_vec.get_magnitude();
