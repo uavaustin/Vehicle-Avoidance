@@ -131,22 +131,22 @@ impl FoolsMate {
             && self.uav_point.get_z() <= (angle / 2f32).tan() * self.uav_point.get_x()
     }
 
-    //Checks if UAV needs to change course while it is within a sector of the cylinder
+    //Checks if UAV needs to change course while it is within a sector of the sphere
     fn change_course(&self) -> bool {
-        //Should we be using velocity instead of heading here?
+        //TO DO: Should we be using velocity instead of heading here?
         let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
-        // temporary holder
-        let uav_point_exit: Point = Point::new(1f32, 1f32, 1f32);
-
+        // TO DO: rotate the enemy's heading by half the theta in order to get the end point
+        let enemy_uav_intersect: Vector = Vector::intersect(Vector::from_point(self.uav_point), self.uav_heading, Vector::from_point(self.enemy_point), self.enemy_heading);
+        let uav_point_exit : Point = Point::from_vector(enemy_uav_intersect);
         //Compute beta and vectors to rotate the sector
         let norm: Vector = Vector::cross(Vector::from_point(self.uav_point), Vector::from_point(uav_point_exit));
         let radius: f32 = self.sphere.get_inner_radius();
         let z: Vector =  Vector::new(0f32,0f32,1f32);
         let alpha_uav: f32 = norm.angle(z).to_radians();
         let beta_uav: f32 = FoolsMate::THETA * (std::f32::consts::PI*0.5*(1.0/FoolsMate::THETA)*alpha_uav).cos();
-        // add lambda
+        // TO DO: add lambda
         let length_1:Vector = Vector::new(1f32+radius,radius,radius);
         //Use Quaternion to rotate the sector by beta_uav along z
         let length_2: Vector = self.rotation.rotate_vector(length_1);
@@ -154,6 +154,16 @@ impl FoolsMate {
         let length_1_rot = self.rotation.rotate_vector(a);
         let length_2_rot = self.rotation.rotate_vector(a);
 
+        //Calculate intersection
+        // TO DO: what are the origin points of l1 and l2?
+        let l1_l2_intersect: Vector = Vector::intersect(length_1_rot, self.uav_heading, length_2_rot, self.enemy_heading);
+       // let l1_l2_intersect_pt: Point = Point::from_vector(l1_l2_intersect);
+
+        if l1_l2_intersect.get_magnitude() > radius {
+            // follow line until it intersect the sphere
+        }
+
+        // TO DO: how to use the rotation in the math below?
         let dist_vec: Vector = Vector::from(self.uav_point, uav_point_exit);
         let dist: f32 = dist_vec.get_magnitude();
         let dist_unit_vec: Vector = dist_vec.to_dir();
