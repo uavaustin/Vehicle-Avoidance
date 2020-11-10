@@ -101,6 +101,41 @@ impl Vector {
         norm
     }
 
+    pub fn intersect(point1: Vector, heading1: Vector, point2: Vector, heading2: Vector) -> Vector {
+        // find the direction projection
+        let u: f32 = heading1.dot(heading2);
+        if  u == 1f32 { // the lines are parallel
+            return Vector::new(0f32,0f32,-1f32)
+        }
+        //Find the separation projections
+        let t1: f32 = (point2.sub(point1)).dot(heading1);
+        let t2: f32 = (point2.sub(point1)).dot(heading2);
+        //Find distance along line1
+        let d1: f32 = (t1-u*t2)/(1f32-u*u);
+        let d2: f32 = (t2-u*t1)/(u*u-1f32);
+        //Find the point on line1
+        let p1: Vector = point1.add(heading1.scale(d1));
+        let p2: Vector = point2.add(heading2.scale(d2));
+
+        let norm: Vector = Vector::cross(p1, p2);
+        norm
+    }
+
+    pub fn add(&self, other: Vector) -> Vector{
+        let added: Vector = Vector::new(self.get_i()+other.get_i(), self.get_j()+other.get_j(), self.get_k()+other.get_k());
+        added
+    }
+
+    pub fn sub(&self, other: Vector) -> Vector{
+        let sub: Vector = Vector::new(self.get_i()-other.get_i(), self.get_j()-other.get_j(),self.get_k()-other.get_k());
+        sub
+    }
+
+    pub fn scale(&self, other: f32) -> Vector{
+        let scaled: Vector = Vector::new(other*self.get_i(),other*self.get_j(),other*self.get_k());
+        scaled
+    }
+
     pub fn angle(&self, other: Vector) -> f32 {
         let mut a: f32 = (self.dot(other) / (self.get_magnitude() * other.get_magnitude())).acos();
         if a > f32::consts::PI / 2f32 {
