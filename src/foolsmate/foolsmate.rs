@@ -146,6 +146,7 @@ impl FoolsMate {
             Point::from_vector(current_point),
             Point::from_vector(next_point),
         );
+        //Should check -1 * dir as well
         if path.to_dir() != self.enemy_heading.to_dir() {
             let normal: Vector = current_point * next_point;
             let axis: Vector = normal * z;
@@ -161,6 +162,7 @@ impl FoolsMate {
             let rotated_start: Vector = space_rotation.rotate_vector(current_point);
 
             //Angles divided in half
+            //Double check positive or negative
             let path_rotation_left: Quaternion = Quaternion::rotation(-beta / 2f32, z);
 
             let right_arm_dir: Vector = Vector::new(1f32, 0f32, 0f32);
@@ -175,6 +177,7 @@ impl FoolsMate {
 
             //Find intersect of second!!
 
+            //To test: Make sure starting point is on x-y plane
             self.enemy_heading
         } else {
             self.enemy_heading
