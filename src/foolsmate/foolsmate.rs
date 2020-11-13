@@ -131,23 +131,81 @@ impl FoolsMate {
             && self.uav_point.get_z() <= (angle / 2f32).tan() * self.uav_point.get_x()
     }
 
+    //Preconditions:    Enemy heading is THETA/2 degrees off the x-axis and parallel to the x-y plane
+    //                  Enemy position is (0,0,0)
+    fn need_to_change(&self) -> Vector {
+        let x: Vector = Vector::new(1f32, 0f32, 0f32);
+        let z: Vector = Vector::new(0f32, 0f32, 1f32);
+
+        let enemy_speed: f32 = self.enemy_heading.get_magnitude();
+        let uav_speed: f32 = self.uav_heading.get_magnitude();
+
+        let current_point: Vector = Vector::from_point(self.uav_point);
+        let next_point: Vector = current_point.add(self.uav_heading);
+        let path: Vector = Vector::from(
+            Point::from_vector(current_point),
+            Point::from_vector(next_point),
+        );
+        if path.to_dir() != self.enemy_heading.to_dir() {
+            let normal: Vector = current_point * next_point;
+            let axis: Vector = normal * z;
+
+            let alpha: f32 = (normal.dot(z) / (z.get_magnitude() * normal.get_magnitude())).acos();
+            let beta: f32 =
+                FoolsMate::THETA * (std::f32::consts::PI / (2f32 * FoolsMate::THETA) * alpha).cos();
+
+            //Angles divided in half
+            let space_rotation: Quaternion = Quaternion::rotation(alpha / 2f32, axis);
+
+            let rotated_path: Vector = space_rotation.rotate_vector(path).to_dir();
+            let rotated_start: Vector = space_rotation.rotate_vector(current_point);
+
+            //Angles divided in half
+            let path_rotation_left: Quaternion = Quaternion::rotation(-beta / 2f32, z);
+
+            let right_arm_dir: Vector = Vector::new(1f32, 0f32, 0f32);
+            let left_arm_dir: Vector = path_rotation_left.rotate_vector(right_arm_dir);
+
+            let first_intersect: Point = Point::new(
+                0f32,
+                rotated_start.get_j()
+                    + (-rotated_start.get_i() / rotated_path.get_i()) * (rotated_path.get_j()),
+                0f32,
+            );
+
+            //Find intersect of second!!
+
+            self.enemy_heading
+        } else {
+            self.enemy_heading
+        }
+    }
+
     //Checks if UAV needs to change course while it is within a sector of the sphere
     fn change_course(&self) -> bool {
-        //TO DO: Should we be using velocity instead of heading here?
         let ENEMY_SPEED: f32 = self.enemy_heading.get_magnitude();
         let UAV_SPEED: f32 = self.uav_heading.get_magnitude();
 
         // TO DO: rotate the enemy's heading by half the theta in order to get the end point
-        let enemy_uav_intersect: Vector = Vector::intersect(Vector::from_point(self.uav_point), self.uav_heading, Vector::from_point(self.enemy_point), self.enemy_heading);
-        let uav_point_exit : Point = Point::from_vector(enemy_uav_intersect);
+        let enemy_uav_intersect: Vector = Vector::intersect(
+            Vector::from_point(self.uav_point),
+            self.uav_heading,
+            Vector::from_point(self.enemy_point),
+            self.enemy_heading,
+        );
+        let uav_point_exit: Point = Point::from_vector(enemy_uav_intersect);
         //Compute beta and vectors to rotate the sector
-        let norm: Vector = Vector::cross(Vector::from_point(self.uav_point), Vector::from_point(uav_point_exit));
+        let norm: Vector = Vector::cross(
+            Vector::from_point(self.uav_point),
+            Vector::from_point(uav_point_exit),
+        );
         let radius: f32 = self.sphere.get_inner_radius();
-        let z: Vector =  Vector::new(0f32,0f32,1f32);
+        let z: Vector = Vector::new(0f32, 0f32, 1f32);
         let alpha_uav: f32 = norm.angle(z).to_radians();
-        let beta_uav: f32 = FoolsMate::THETA * (std::f32::consts::PI*0.5*(1.0/FoolsMate::THETA)*alpha_uav).cos();
+        let beta_uav: f32 = FoolsMate::THETA
+            * (std::f32::consts::PI * 0.5 * (1.0 / FoolsMate::THETA) * alpha_uav).cos();
         // TO DO: add lambda
-        let length_1:Vector = Vector::new(1f32+radius,radius,radius);
+        let length_1: Vector = Vector::new(1f32 + radius, radius, radius);
         //Use Quaternion to rotate the sector by beta_uav along z
         let length_2: Vector = self.rotation.rotate_vector(length_1);
         let a: Vector = Vector::cross(norm, z);
@@ -156,8 +214,13 @@ impl FoolsMate {
 
         //Calculate intersection
         // TO DO: what are the origin points of l1 and l2?
-        let l1_l2_intersect: Vector = Vector::intersect(length_1_rot, self.uav_heading, length_2_rot, self.enemy_heading);
-       // let l1_l2_intersect_pt: Point = Point::from_vector(l1_l2_intersect);
+        let l1_l2_intersect: Vector = Vector::intersect(
+            length_1_rot,
+            self.uav_heading,
+            length_2_rot,
+            self.enemy_heading,
+        );
+        // let l1_l2_intersect_pt: Point = Point::from_vector(l1_l2_intersect);
 
         if l1_l2_intersect.get_magnitude() > radius {
             // follow line until it intersect the sphere
@@ -177,10 +240,10 @@ impl FoolsMate {
         let dist_vec_btwn_us: Vector = Vector::from(self.uav_point, self.enemy_point);
         let dist_btwn_us: f32 = dist_vec_btwn_us.get_magnitude();
         let alpha: f32 = (((FoolsMate::THETA / 2f32).sin() / dist) * dist_btwn_us).asin();
-        let beta: f32 = 2f32*std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
+        let beta: f32 = 2f32 * std::f32::consts::PI - (FoolsMate::THETA / 2f32) - alpha;
         let dist_vec_to_end: Vector = Vector::from(self.enemy_point, uav_point_exit);
         let dist_to_end: f32 = dist_vec_to_end.get_magnitude();
-        let enemy_path: f32 = (dist_to_end / beta.sin())*alpha.sin();
+        let enemy_path: f32 = (dist_to_end / beta.sin()) * alpha.sin();
         let enemy_unit_vec: Vector = self.enemy_heading.to_dir();
         let enemy_dist_vec: Vector = enemy_unit_vec * enemy_path;
         let enemy_dist: f32 = enemy_dist_vec.get_magnitude();
@@ -193,7 +256,6 @@ impl FoolsMate {
         } else {
             true
         }
-
     }
 
     //Possible Optimisation: Find closest point on cone and take normal
@@ -263,6 +325,10 @@ mod tests {
 
     use super::*;
     fn create_fm() -> FoolsMate {
+        create_fm_angle(std::f32::consts::PI / 4f32)
+    }
+
+    fn create_fm_angle(angle: f32) -> FoolsMate {
         let mut path: LinkedList<Point> = LinkedList::new();
         for x in 0..10 {
             path.push_back(Point::new(10f32, x as f32, 0f32));
@@ -273,7 +339,6 @@ mod tests {
         let enemy_heading: Vector = Vector::new(1f32, 0f32, 0f32);
         let uav_heading: Vector = Vector::new(0f32, 1f32, 1f32);
         let axis: Vector = Vector::new(0f32, 0f32, 1f32);
-        let angle: f32 = std::f32::consts::PI / 4f32;
         let rotation: Quaternion = Quaternion::rotation(angle, axis);
         let sphere: Sphere = Sphere::new(enemy_heading);
         FoolsMate::define(
@@ -287,6 +352,7 @@ mod tests {
             sphere,
         )
     }
+
     #[test]
     fn test_rotation() {
         let mut fm: FoolsMate = create_fm();
@@ -319,5 +385,12 @@ mod tests {
         }
         fm.evade();
         assert_ne!(fm.path, old_path);
+    }
+
+    #[test]
+    fn test_change_rotation() {
+        let mut fm: FoolsMate = create_fm_angle(std::f32::consts::PI / 8f32);
+        fm.rotate_space();
+        assert_eq!(fm.need_to_change(), Vector::new(1f32, 1f32, 1f32))
     }
 }
