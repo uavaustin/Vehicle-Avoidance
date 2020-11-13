@@ -1,7 +1,9 @@
 use super::point::*;
 use std::f32;
 use std::fmt;
+use std::ops::Add;
 use std::ops::Mul;
+use std::ops::Sub;
 
 #[derive(Clone, Debug, Copy)]
 pub struct Vector {
@@ -55,6 +57,28 @@ impl Mul<Vector> for Vector {
     }
 }
 
+impl Sub<Vector> for Vector {
+    type Output = Vector;
+
+    fn sub(self, rhs: Vector) -> Vector {
+        let new_i: f32 = self.get_i() - rhs.get_i();
+        let new_j: f32 = self.get_j() - rhs.get_j();
+        let new_k: f32 = self.get_k() - rhs.get_k();
+        Vector::new(new_i, new_j, new_k)
+    }
+}
+
+impl Add<Vector> for Vector {
+    type Output = Vector;
+
+    fn add(self, rhs: Vector) -> Vector {
+        let new_i: f32 = self.get_i() + rhs.get_i();
+        let new_j: f32 = self.get_j() + rhs.get_j();
+        let new_k: f32 = self.get_k() + rhs.get_k();
+        Vector::new(new_i, new_j, new_k)
+    }
+}
+
 impl Vector {
     pub fn new(i: f32, j: f32, k: f32) -> Self {
         Self {
@@ -94,25 +118,26 @@ impl Vector {
     }
 
     pub fn cross(first: Vector, second: Vector) -> Vector {
-        let i_new: f32 =  (first.get_j()*second.get_k()) - (first.get_k()*second.get_j());
-        let j_new: f32 =  (first.get_k()*second.get_i()) - (first.get_i()*second.get_k());
-        let k_new: f32 =  (first.get_i()*second.get_j()) - (first.get_j()*second.get_i());
-        let norm: Vector = Vector::new(i_new, j_new , k_new);
+        let i_new: f32 = (first.get_j() * second.get_k()) - (first.get_k() * second.get_j());
+        let j_new: f32 = (first.get_k() * second.get_i()) - (first.get_i() * second.get_k());
+        let k_new: f32 = (first.get_i() * second.get_j()) - (first.get_j() * second.get_i());
+        let norm: Vector = Vector::new(i_new, j_new, k_new);
         norm
     }
 
     pub fn intersect(point1: Vector, heading1: Vector, point2: Vector, heading2: Vector) -> Vector {
         // find the direction projection
         let u: f32 = heading1.dot(heading2);
-        if  u == 1f32 { // the lines are parallel
-            return Vector::new(0f32,0f32,-1f32)
+        if u == 1f32 {
+            // the lines are parallel
+            return Vector::new(0f32, 0f32, -1f32);
         }
         //Find the separation projections
         let t1: f32 = (point2.sub(point1)).dot(heading1);
         let t2: f32 = (point2.sub(point1)).dot(heading2);
         //Find distance along line1
-        let d1: f32 = (t1-u*t2)/(1f32-u*u);
-        let d2: f32 = (t2-u*t1)/(u*u-1f32);
+        let d1: f32 = (t1 - u * t2) / (1f32 - u * u);
+        let d2: f32 = (t2 - u * t1) / (u * u - 1f32);
         //Find the point on line1
         let p1: Vector = point1.add(heading1.scale(d1));
         let p2: Vector = point2.add(heading2.scale(d2));
@@ -121,18 +146,30 @@ impl Vector {
         norm
     }
 
-    pub fn add(&self, other: Vector) -> Vector{
-        let added: Vector = Vector::new(self.get_i()+other.get_i(), self.get_j()+other.get_j(), self.get_k()+other.get_k());
+    pub fn add(&self, other: Vector) -> Vector {
+        let added: Vector = Vector::new(
+            self.get_i() + other.get_i(),
+            self.get_j() + other.get_j(),
+            self.get_k() + other.get_k(),
+        );
         added
     }
 
-    pub fn sub(&self, other: Vector) -> Vector{
-        let sub: Vector = Vector::new(self.get_i()-other.get_i(), self.get_j()-other.get_j(),self.get_k()-other.get_k());
+    pub fn sub(&self, other: Vector) -> Vector {
+        let sub: Vector = Vector::new(
+            self.get_i() - other.get_i(),
+            self.get_j() - other.get_j(),
+            self.get_k() - other.get_k(),
+        );
         sub
     }
 
-    pub fn scale(&self, other: f32) -> Vector{
-        let scaled: Vector = Vector::new(other*self.get_i(),other*self.get_j(),other*self.get_k());
+    pub fn scale(&self, other: f32) -> Vector {
+        let scaled: Vector = Vector::new(
+            other * self.get_i(),
+            other * self.get_j(),
+            other * self.get_k(),
+        );
         scaled
     }
 
