@@ -1,17 +1,17 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
-mod foolsmate;
-mod obj;
+pub mod algorithm;
+pub mod foolsmate;
+pub mod obj;
 
-use foolsmate::foolsmate::FoolsMate;
-use foolsmate::node::Node;
 use foolsmate::space::point::Point;
 use foolsmate::space::quaternion::Quaternion;
 use foolsmate::space::vector::Vector;
 use foolsmate::sphere::Sphere;
 use obj::craft::Craft;
 use obj::location::Location;
+use obj::node::Node;
 
 /*
 To-do:

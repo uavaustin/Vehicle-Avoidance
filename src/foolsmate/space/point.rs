@@ -54,6 +54,14 @@ impl Point {
         Self { x: x, y: y, z: z }
     }
 
+    pub fn to_location(self, ref_point: Point) -> Location {
+        const SCALE_FACTOR: f32 = 111_320f32;
+        let lat: f32 = (self.get_x() + ref_point.get_x()) / SCALE_FACTOR;
+        let lon: f32 = (self.get_y() + ref_point.get_y()) / SCALE_FACTOR;
+        let alt: f32 = (self.get_z() + ref_point.get_z()) / SCALE_FACTOR;
+        Location::new(lat, lon, alt)
+    }
+
     pub fn from_vector(vector: Vector) -> Self {
         Self {
             x: vector.get_i(),
