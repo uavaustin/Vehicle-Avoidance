@@ -235,17 +235,31 @@ mod tests {
 
         assert_eq!(v1.dot(v2), 9f32);
 
-        let cross: Vector = v1 * v2;
+        let cross : Vector = Vector::cross(v1, v2);
         assert_eq!(
             cross.get_i() == 1f32 && cross.get_j() == -2f32 && cross.get_k() == 1f32,
             true
         );
 
         let scalar: f32 = 2f32;
-        let scaled: Vector = v2 * scalar;
+        let scaled: Vector = v2.scale( scalar);
         assert_eq!(
             scaled.get_i() == 4f32 && scaled.get_j() == 6f32 && scaled.get_k() == 8f32,
             true
         );
+
+        let sum: Vector = v1.add(v2);
+        assert_eq!(
+            sum.get_i() == 3f32 && sum.get_j() == 4f32 && sum.get_k() == 5f32,
+            true
+        );
+
+        let dif: Vector = v1.sub(v2);
+        assert_eq!(
+            dif.get_i() == -1f32 && dif.get_j() == -2f32 && dif.get_k() == -3f32,
+            true
+        );
+
+
     }
 }

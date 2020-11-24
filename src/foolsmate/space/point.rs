@@ -135,4 +135,18 @@ mod tests {
         let p2: Point = Point::from_location(Location::new(x, y, z), p);
         assert_eq!(p2, Point::new(0f32, -111_320f32, -2f32));
     }
+
+    #[test]
+    fn test_functions() {
+        let p1: Point = Point::new(2f32, 3f32, 4f32);
+        let p1: Point = Point::new(1f32, 1f32, 2f32);
+
+        let distance: f32 = v1.dist(v2);
+        assert_eq!(
+            distance == 3f32
+            true
+        );
+
+    }
+
 }
